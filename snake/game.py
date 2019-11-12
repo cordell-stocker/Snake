@@ -34,6 +34,7 @@ class Game:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         self.exit_clicked = True
+                        self.playing = False
                         # Doesn't close immediately. Will still run a few cycles.
                         pygame.quit() 
             
