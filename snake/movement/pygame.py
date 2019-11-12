@@ -1,9 +1,11 @@
 from snake.movement.movement import Movement
 import pygame
 
+
 class PygameMovement(Movement):
-    
-    def get_direction(self):
+
+    @staticmethod
+    def get_direction():
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_LEFT]:

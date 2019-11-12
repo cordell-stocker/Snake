@@ -1,6 +1,7 @@
 from snake.box import Box
 import random
 
+
 class AppleGenerator():
 
     def __init__(self, rows_cols, grid_size, color=(255, 0, 0)):

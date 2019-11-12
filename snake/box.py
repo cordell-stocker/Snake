@@ -1,5 +1,6 @@
 from pygame.draw import rect
 
+
 class Box:
 
     def __init__(self, start_x_y, width_height, color):

@@ -1,12 +1,13 @@
-import pygame
-from pygame.time import Clock, delay
-from pygame import display, draw
-from snake.box import Box
-from snake.snake import Snake
-from snake.apple import AppleGenerator
-import pygame
 import tkinter as tk
 from tkinter import messagebox
+
+import pygame
+from pygame import display, draw
+from pygame.time import Clock, delay
+
+from snake.apple import AppleGenerator
+from snake.snake import Snake
+
 
 class Game:
 
@@ -21,6 +22,12 @@ class Game:
         self.GRID_COLOR = (100, 100, 100)
         self.SNAKE_COLOR = (0, 255, 0)
         self.apple_generator = AppleGenerator(self.ROWS_COLS, self.GRID_SIZE)
+        self.apple = self.apple_generator.generate_apple(self.snake)
+        mid = (self.ROWS_COLS // 2) * self.GRID_SIZE
+        self.start_x_y = (mid, mid)
+        self.snake = Snake(self.start_x_y, self.GRID_SIZE, self.SCREEN_SIZE, self.SNAKE_COLOR, self.spawn_apple)
+        self.exit_clicked = None
+        self.playing = None
 
     def start(self):
         self.playing = True
@@ -33,11 +40,12 @@ class Game:
             if not self.exit_clicked:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
+                        # noinspection PyAttributeOutsideInit
                         self.exit_clicked = True
                         self.playing = False
                         # Doesn't close immediately. Will still run a few cycles.
-                        pygame.quit() 
-            
+                        pygame.quit()
+
             if not self.exit_clicked:
                 self.snake.move()
                 self.playing = self.playing and not self.snake.has_collided
@@ -48,18 +56,15 @@ class Game:
                     print('Score: ', len(self.snake.body) + 1)
                     self.message_box('You lost!', 'Play again?')
                     self.reset()
+                    # noinspection PyAttributeOutsideInit
                     self.playing = True
-        
-        
-    
+
     def spawn_apple(self):
         self.apple = self.apple_generator.generate_apple(self.snake)
         self.snake.set_apple(self.apple)
 
     def reset(self):
-        mid = (self.ROWS_COLS // 2) * self.GRID_SIZE
-        start_x_y = (mid, mid)
-        self.snake = Snake(start_x_y, self.GRID_SIZE, self.SCREEN_SIZE, self.SNAKE_COLOR, self.spawn_apple)
+        self.snake = Snake(self.start_x_y, self.GRID_SIZE, self.SCREEN_SIZE, self.SNAKE_COLOR, self.spawn_apple)
         self.spawn_apple()
 
     def draw_game(self):
@@ -79,11 +84,13 @@ class Game:
             draw.line(self.DISPLAY, self.GRID_COLOR, (x, 0), (x, self.SCREEN_SIZE))
             draw.line(self.DISPLAY, self.GRID_COLOR, (0, y), (self.SCREEN_SIZE, y))
 
-    def message_box(self, subject, content):
+    @staticmethod
+    def message_box(subject, content):
         root = tk.Tk()
         root.attributes("-topmost", True)
         root.withdraw()
         messagebox.showinfo(subject, content)
+        # noinspection PyBroadException
         try:
             root.destroy()
         except:

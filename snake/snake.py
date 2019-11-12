@@ -1,21 +1,26 @@
 from snake.box import Box
 from snake.movement.pygame import PygameMovement
 
+
 class Snake:
 
-    def __init__(self, start_X_Y, grid_size, screen_size, color, spawn_apple, starting_size=1, movement=PygameMovement()):
+    def __init__(self, start_x_y, grid_size, screen_size, color,
+                 spawn_apple, starting_size=1, movement=PygameMovement()):
         self.color = color
         self.spawn_apple = spawn_apple
         self.screen_size = screen_size
         self.movement = movement
         self.grid_size = grid_size
         self.box_size = (grid_size, grid_size)
-        self.head = Box(start_X_Y, self.box_size, color)
+        self.head = Box(start_x_y, self.box_size, color)
         self.body = []
-        self.xvel = 1 # move right
+        self.xvel = 1  # move right
         self.yvel = 0
+        self.apple = None
+        self.has_collided = None
+        x, y = self.head.location
         for i in range(starting_size - 1):
-            self.grow((self.head.x - (grid_size * i), self.head.y))
+            self.grow((x - (grid_size * i), y))
     
     def grow(self, location):
         self.body.insert(0, Box(location, self.box_size, self.color))
@@ -35,7 +40,6 @@ class Snake:
         if len(self.body) > 0:
             old_tail_x_y = self.body[0].location
 
-        temp = 0
         new_location = (0, 0)
         direction = self.movement.get_direction()
         if direction == "LEFT":
